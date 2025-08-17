@@ -1,9 +1,22 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import { ArrowLeftIcon, LoaderIcon, Trash2Icon } from "lucide-react";
+
+const categories = [
+  "legal services",
+  "mental health support",
+  "tax clinic",
+  "help with application",
+  "food banks",
+  "employment agency",
+  "free clothing",
+  "itinerary services in WPESS",
+  "emergency shelters",
+  "clinics for uninsured",
+  "others",
+];
 
 const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
@@ -11,7 +24,6 @@ const NoteDetailPage = () => {
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
-
   const { id } = useParams();
 
   useEffect(() => {
@@ -26,13 +38,11 @@ const NoteDetailPage = () => {
         setLoading(false);
       }
     };
-
     fetchNote();
   }, [id]);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
-
     try {
       await api.delete(`/notes/${id}`);
       toast.success("Note deleted");
@@ -44,13 +54,11 @@ const NoteDetailPage = () => {
   };
 
   const handleSave = async () => {
-    if (!note.title.trim() || !note.content.trim()) {
-      toast.error("Please add a title or content");
+    if (!note.title.trim() || !note.category.trim() || !note.content.trim()) {
+      toast.error("Title, Category, and Content are required!");
       return;
     }
-
     setSaving(true);
-
     try {
       await api.put(`/notes/${id}`, note);
       toast.success("Note updated successfully");
@@ -88,28 +96,90 @@ const NoteDetailPage = () => {
 
           <div className="card bg-base-100">
             <div className="card-body">
+              {/* Title */}
               <div className="form-control mb-4">
                 <label className="label">
-                  <span className="label-text">Title</span>
+                  <span className="label-text">Title *</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Note title"
                   className="input input-bordered"
                   value={note.title}
                   onChange={(e) => setNote({ ...note, title: e.target.value })}
                 />
               </div>
 
+              {/* Category */}
               <div className="form-control mb-4">
                 <label className="label">
-                  <span className="label-text">Content</span>
+                  <span className="label-text">Category *</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={note.category}
+                  onChange={(e) => setNote({ ...note, category: e.target.value })}
+                >
+                  <option value="">-- Select Category --</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Service Provider */}
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Service Provider</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered"
+                  value={note.serviceProvider || ""}
+                  onChange={(e) =>
+                    setNote({ ...note, serviceProvider: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Content */}
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Content *</span>
                 </label>
                 <textarea
-                  placeholder="Write your note here..."
                   className="textarea textarea-bordered h-32"
                   value={note.content}
                   onChange={(e) => setNote({ ...note, content: e.target.value })}
+                />
+              </div>
+
+              {/* Phone Contact */}
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Phone Contact</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered"
+                  value={note.phoneContact || ""}
+                  onChange={(e) => setNote({ ...note, phoneContact: e.target.value })}
+                />
+              </div>
+
+              {/* Web/Email Contact */}
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Web or Email Contact</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered"
+                  value={note.webOrEmailContact || ""}
+                  onChange={(e) =>
+                    setNote({ ...note, webOrEmailContact: e.target.value })
+                  }
                 />
               </div>
 
@@ -125,4 +195,5 @@ const NoteDetailPage = () => {
     </div>
   );
 };
+
 export default NoteDetailPage;
