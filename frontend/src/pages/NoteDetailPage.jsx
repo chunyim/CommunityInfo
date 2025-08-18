@@ -3,20 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import { ArrowLeftIcon, LoaderIcon, Trash2Icon } from "lucide-react";
-
-const categories = [
-  "legal services",
-  "mental health support",
-  "tax clinic",
-  "help with application",
-  "food banks",
-  "employment agency",
-  "free clothing",
-  "itinerary services in WPESS",
-  "emergency shelters",
-  "clinics for uninsured",
-  "others",
-];
+import { categories } from "../constants/categories";
 
 const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
